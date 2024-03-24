@@ -1,6 +1,7 @@
 import subprocess
 import concurrent.futures
 import datetime
+import numpy as np
 
 def time_to_seconds(time_str):
     """Converts a time string (HH:MM) to total seconds."""
@@ -12,9 +13,12 @@ def time_to_seconds(time_str):
 
 def seconds_to_time(seconds):
     """Converts seconds to a formatted time string with hours, minutes, and seconds."""
+    
     dt = datetime.datetime.fromtimestamp(seconds)
-    if dt.hour > 0:
-        return dt.strftime("%H:%M:%S")  # Include hours if necessary
+    if seconds > 3600:
+        time_str = dt.strftime(f"%H:%M:%S")
+        first_cut = time_str.find(":")
+        return str(int(time_str[:first_cut])-3) + time_str[first_cut:] # Include hours if necessary
     else:
         return dt.strftime("%M:%S")  # Only minutes and seconds if no hours
 
@@ -46,23 +50,32 @@ def download_chunks_parallel(video_url):
     time_obj = time_to_seconds(duration_obj.stdout.strip())
     duration = int(time_obj)
 
-    FIVE_MINUTES = 300 # sec
-    if duration < FIVE_MINUTES:
-        print("Video is shorter than 5 minutes. Skipping...")
-        return
-
     chunk_size = 30  # sec
-    number_of_clips = 10
-    one_part = duration / number_of_clips
     
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
-        for i in range(number_of_clips):
-            chunk_start = i * one_part
-            chunk_end = chunk_start + chunk_size
-            futures.append(executor.submit(
-                download_chunk, i, original_filename, chunk_start, chunk_end, video_url
-            ))
+        
+        FIVE_MINUTES = 300 # sec
+        if duration < FIVE_MINUTES:
+            times_to_download = int(np.floor(duration / chunk_size))
+            print("JORAAAAAAAAAAA")
+            for i in range(times_to_download):
+                chunk_start = i * chunk_size
+                chunk_end = chunk_start + chunk_size
+                print(chunk_start, chunk_end)
+                futures.append(executor.submit(
+                    download_chunk, i, original_filename, chunk_start, chunk_end, video_url
+                ))
+        else:
+            number_of_clips = 10
+            one_part = duration / number_of_clips
+    
+            for i in range(number_of_clips):
+                chunk_start = i * one_part
+                chunk_end = chunk_start + chunk_size
+                futures.append(executor.submit(
+                    download_chunk, i, original_filename, chunk_start, chunk_end, video_url
+                ))
 
         concurrent.futures.wait(futures)
 
