@@ -82,24 +82,3 @@ if __name__ == "__main__":
     # video_url = "https://www.youtube.com/watch?v=MI1TlBfPjQs"
     video_url = "https://www.youtube.com/watch?v=HN-WH7C4K0Q"
     download_chunks_parallel(video_url)
-
-# if duration < FIVE_MINUTES:
-#     times_to_download = int(np.floor(duration / chunk_size))
-#     print("JORAAAAAAAAAAA")
-#     for i in range(times_to_download):
-#         chunk_start = i * chunk_size
-#         chunk_end = chunk_start + chunk_size
-#         print(chunk_start, chunk_end)
-#         futures.append(executor.submit(
-#             download_chunk, i, original_filename, chunk_start, chunk_end, video_url
-#         ))
-# else:
-#     number_of_clips = 10
-#     one_part = duration / number_of_clips
-
-#     for i in range(number_of_clips):
-#         chunk_start = i * one_part
-#         chunk_end = chunk_start + chunk_size
-#         futures.append(executor.submit(
-#             download_chunk, i, original_filename, chunk_start, chunk_end, video_url
-#         ))
