@@ -22,7 +22,7 @@ def seconds_to_time(seconds):
     else:
         return dt.strftime("%M:%S")  # Only minutes and seconds if no hours
 
-def download_in_paralel(iterate_over, multiply_by, chunk_size, original_filename):
+def download_in_paralel(iterate_over, multiply_by, chunk_size, original_filename, video_url):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
         
@@ -71,14 +71,14 @@ def download_chunks_parallel(video_url):
 
     if duration < FIVE_MINUTES:
         times_to_download = int(np.floor(duration / chunk_size))
-        download_in_paralel(times_to_download, chunk_size, chunk_size, original_filename)
+        download_in_paralel(times_to_download, chunk_size, chunk_size, original_filename, video_url)
     else:
         number_of_clips = 10
         one_part = duration / number_of_clips
-        download_in_paralel(number_of_clips, one_part, chunk_size, original_filename)
+        download_in_paralel(number_of_clips, one_part, chunk_size, original_filename, video_url)
 
 
-if __name__ == "__main__":
-    # video_url = "https://www.youtube.com/watch?v=MI1TlBfPjQs"
-    video_url = "https://www.youtube.com/watch?v=HN-WH7C4K0Q"
-    download_chunks_parallel(video_url)
+# if __name__ == "__main__":
+#     # video_url = "https://www.youtube.com/watch?v=MI1TlBfPjQs"
+#     video_url = "https://www.youtube.com/watch?v=HN-WH7C4K0Q"
+#     download_chunks_parallel(video_url)
